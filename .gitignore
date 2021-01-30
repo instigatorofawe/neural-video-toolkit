@@ -1,0 +1,6 @@
+# IDE folders and virtualenv
+.idea
+venv
+
+# Build folders
+build
