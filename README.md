@@ -83,5 +83,3 @@ Code modified from [X. Wang et al., Enhanced Super-Resolution Generative Adversa
 on Computer Vision Workshops (ECCVW)*, **2018**](https://github.com/BlueAmulet/ESRGAN)
 
 Pretrained models can be found at [https://upscale.wiki/wiki/Model_Database](https://upscale.wiki/wiki/Model_Database).
-
-## [Changelog](CHANGELOG.md)

@@ -23,7 +23,7 @@ if __name__ == '__main__':
                         help="Architecture for upscaling method. Supported options: esrgan",
                         default="esrgan")
 
-    args = parser.parse_args(['data/ep14_ed_full.mkv'])
+    args = parser.parse_args()
 
     # Different architectures need to be handled differently
     model = None
