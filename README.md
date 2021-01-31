@@ -12,9 +12,23 @@ are supported. Additional model architectures can be supported through the exten
 1. [Architectures](#architectures)
    1. [Architectures for image super resolution](#architectures-for-image-super-resolution)
       1. [ESRGAN](#esrgan)
+      1. [Sub-pixel Convolutional Neural Network](#sub-pixel-convolutional-neural-network)
 1. [Changelog](CHANGELOG.md)
 
 ## Package Requirements
+
+Naturally, as this package is written in Python, you will require Python 3.8.
+
+You will also require *ffmpeg* and *ffprobe* on your PATH. On Ubuntu, you can use apt or snap for installation. On
+Windows, you can use chocolatey.
+
+```
+sudo apt install ffmpeg
+```
+
+```
+choco install ffmpeg
+```
 
 Depending on your hardware/operating system, you may need to use a different procedure when installing TensorFlow or
 PyTorch. This package also requires CUDA 11.0 as well as a compatible GPU. This package was developed on Ubuntu LTS
@@ -82,10 +96,21 @@ optional arguments:
 ```
 
 ## Architectures
+
 ### Architectures for image super resolution
+
 #### ESRGAN
 
 Code modified from [X. Wang et al., Enhanced Super-Resolution Generative Adversarial Networks, *The European Conference
 on Computer Vision Workshops (ECCVW)*, **2018**](https://github.com/BlueAmulet/ESRGAN)
 
 Pretrained models can be found at [https://upscale.wiki/wiki/Model_Database](https://upscale.wiki/wiki/Model_Database).
+
+#### Sub-pixel Convolutional Neural Network
+
+Code modified from [Keras example: Image Super-Resolution using an Efficient Sub-Pixel CNN](
+https://github.com/keras-team/keras-io/blob/master/examples/vision/super_resolution_sub_pixel.py)
+
+Methodology from [W. Shi et al., *Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel
+Convolutional Neural Network, Computer Vision and Pattern Recognition*, **2016**](https://arxiv.org/abs/1609.05158)
+

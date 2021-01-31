@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 import ffmpeg
 import numpy
+import tensorflow
 import torch
 
 from src import get_video_info
@@ -18,16 +19,16 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--output", metavar="output_filename", type=str,
                         help="Filename of output video file. Defaults to (input_filename)_upscaled.")
     parser.add_argument("-m", "--model", metavar="model_filename", type=str,
-                        help="Filename of model weights.", default="models/2x_FilmFrames_0.5_677000_G.pth")
+                        help="Filename of model weights.")
     parser.add_argument("-a", "--arch", metavar="architecture", type=str,
-                        help="Architecture for upscaling method. Supported options: esrgan",
-                        default="esrgan")
+                        help="""Architecture for upscaling method. Supported options: esrgan, subpixel_cnn. 
+                        Default: esrgan""", default="esrgan")
 
     args = parser.parse_args()
 
     # Different architectures need to be handled differently
     model = None
-    upscale = 1
+    upscale = 1  # Coefficient by which we're scaling the output video
 
     if args.arch == "esrgan":
         state_dict = torch.load(args.model)
@@ -41,6 +42,8 @@ if __name__ == '__main__':
         for k, v in model.named_parameters():
             v.requires_grad = False
         model = model.to('cuda')
+    elif args.arch == "subpixel_cnn":
+        pass
     else:
         print("Architecture not supported!")
         exit(1)
@@ -76,26 +79,30 @@ if __name__ == '__main__':
     )
 
     while True:
-        in_bytes = input_process.stdout.read(width*height*3)
+        in_bytes = input_process.stdout.read(width * height * 3)
         if not in_bytes:
             break
         img = numpy.frombuffer(in_bytes, 'uint8').reshape([height, width, 3])
         img = img * 1. / numpy.iinfo(img.dtype).max
 
-        # Will have to refactor this code to support Tensorflow models
-        img = torch.from_numpy(numpy.transpose(img, (2, 0, 1))).float()
-        img_LR = img.unsqueeze(0)
-        img_LR = img_LR.to('cuda')
+        # Separate handling for separate model architectures
+        if args.arch == "esrgan":
+            img = torch.from_numpy(numpy.transpose(img, (2, 0, 1))).float()
+            img_LR = img.unsqueeze(0)
+            img_LR = img_LR.to('cuda')
+            with torch.no_grad():
+                output = model(img_LR).data.squeeze(0).float().cpu().clamp_(0, 1).numpy()
+            output = numpy.transpose(output, (1, 2, 0))
+        elif args.arch == "subpixel_cnn":
+            # One filter is run on each channel
+            img = img.transpose((3, 1, 2, 0)).astype('float32')
+            output = tensorflow.clip_by_value(model(img), 0, 1).numpy()
+            output = output.transpose((3, 1, 2, 0))
 
-        with torch.no_grad():
-            output = model(img_LR).data.squeeze(0).float().cpu().clamp_(0, 1).numpy()
-
-        output = numpy.transpose(output, (1, 2, 0))
+        # noinspection PyUnboundLocalVariable
         output = (output * 255.0).round().astype('uint8')
-
         output_process.stdin.write(output.tobytes())
 
     output_process.stdin.close()
     input_process.wait()
     output_process.wait()
-
