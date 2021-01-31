@@ -8,10 +8,10 @@ are supported. Additional model architectures can be supported through the exten
 1. [Package Requirements](#package-requirements)
 1. [Setup](#setup)
 1. [Usage Guide](#usage-guide)
-    1. [Image super resolution](#image-super-resolution)
-    1. [Video input from ffmpeg](#video-input-from-ffmpeg)
+   1. [Image super resolution](#image-super-resolution)
 1. [Architectures](#architectures)
-    1. [ESRGAN](#esrgan)
+   1. [Architectures for image super resolution](#architectures-for-image-super-resolution)
+      1. [ESRGAN](#esrgan)
 1. [Changelog](CHANGELOG.md)
 
 ## Package Requirements
@@ -40,6 +40,12 @@ Package can be installed from source using pip. Navigate to the repository root 
 
 ```
 pip install .
+```
+
+Alternatively, you can use pip to install directly from this Github repository:
+
+```
+pip install git+git://github.com/instigatorofawe/neural-video-toolkit.git
 ```
 
 ## Usage Guide
@@ -76,8 +82,8 @@ optional arguments:
 ```
 
 ## Architectures
-
-### ESRGAN
+### Architectures for image super resolution
+#### ESRGAN
 
 Code modified from [X. Wang et al., Enhanced Super-Resolution Generative Adversarial Networks, *The European Conference
 on Computer Vision Workshops (ECCVW)*, **2018**](https://github.com/BlueAmulet/ESRGAN)

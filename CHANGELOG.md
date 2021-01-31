@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 - 2021-01-30
+### Changed
+- Code refactorizations for style and readability
+
 ## 0.1.1 - 2021-01-30
 ### Fixed
 - File inputs were hard-coded in upscale.py; they are properly parsed from the command line now

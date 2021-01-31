@@ -32,8 +32,8 @@ if __name__ == '__main__':
     if args.arch == "esrgan":
         state_dict = torch.load(args.model)
         in_nc, out_nc, nf, nb, upscale = extract_model_parameters(state_dict)
-        model = architecture.RRDB_Net(in_nc, out_nc, nf, nb, gc=32, upscale=upscale, norm_type=None,
-                                      act_type='leakyrelu', mode='CNA', res_scale=1, upsample_mode='upconv')
+        model = architecture.RRDBNet(in_nc, out_nc, nf, nb, gc=32, upscale=upscale, norm_type=None,
+                                     act_type='leakyrelu', mode='CNA', res_scale=1, upsample_mode='upconv')
         model.load_state_dict(state_dict, strict=True)
 
         # Turn on evaluation mode and turn off gradient computation in pytorch
