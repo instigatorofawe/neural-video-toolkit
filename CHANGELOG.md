@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.1.2 - 2021-01-30
+## 0.1.2 - 2021-01-31
+### Fixed
+- Fixed parsing of command line arguments
+
 ### Changed
 - Code refactorizations for style and readability
 
