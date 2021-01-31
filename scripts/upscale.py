@@ -8,6 +8,7 @@ import torch
 
 from src import get_video_info
 from src.ESRGAN import extract_model_parameters, architecture
+from src.subpixel_cnn import load_subpixel_cnn
 
 if __name__ == '__main__':
     # Parse command line arguments
@@ -43,7 +44,7 @@ if __name__ == '__main__':
             v.requires_grad = False
         model = model.to('cuda')
     elif args.arch == "subpixel_cnn":
-        pass
+        channels, upscale, model = load_subpixel_cnn(args.model)
     else:
         print("Architecture not supported!")
         exit(1)
@@ -82,11 +83,11 @@ if __name__ == '__main__':
         in_bytes = input_process.stdout.read(width * height * 3)
         if not in_bytes:
             break
-        img = numpy.frombuffer(in_bytes, 'uint8').reshape([height, width, 3])
-        img = img * 1. / numpy.iinfo(img.dtype).max
 
         # Separate handling for separate model architectures
         if args.arch == "esrgan":
+            img = numpy.frombuffer(in_bytes, 'uint8').reshape([height, width, 3])
+            img = img * 1. / numpy.iinfo(img.dtype).max
             img = torch.from_numpy(numpy.transpose(img, (2, 0, 1))).float()
             img_LR = img.unsqueeze(0)
             img_LR = img_LR.to('cuda')
@@ -94,6 +95,8 @@ if __name__ == '__main__':
                 output = model(img_LR).data.squeeze(0).float().cpu().clamp_(0, 1).numpy()
             output = numpy.transpose(output, (1, 2, 0))
         elif args.arch == "subpixel_cnn":
+            img = numpy.frombuffer(in_bytes, 'uint8').reshape([1, height, width, 3])
+            img = img * 1. / numpy.iinfo(img.dtype).max
             # One filter is run on each channel
             img = img.transpose((3, 1, 2, 0)).astype('float32')
             output = tensorflow.clip_by_value(model(img), 0, 1).numpy()

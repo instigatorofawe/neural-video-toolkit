@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2021-01-31
+
+### Fixed
+
+- Fixed loading and data processing for subpixel CNN.
+
 ## [0.2.0] - 2021-01-31
 
 ### Added
@@ -35,7 +41,7 @@
   Conference on Computer Vision Workshops (ECCVW)*, **2018**](https://github.com/BlueAmulet/ESRGAN)
 
 [0.1.0]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.0
-
 [0.1.1]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.1
-
 [0.1.2]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.2
+[0.2.0]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.2.0
+[0.2.1]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.2.1
