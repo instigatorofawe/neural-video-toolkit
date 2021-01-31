@@ -13,13 +13,13 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="""Upscale a video file using an image super resolution method.
     Uses ffmpeg for encoding and decoding.""")
 
-    parser.add_argument("file", metavar="input_filename", type=str, nargs=1, help="Filename of input video file.")
+    parser.add_argument("file", metavar="input_filename", type=str, help="Filename of input video file.")
 
-    parser.add_argument("-o", "--output", metavar="output_filename", type=str, nargs=1,
+    parser.add_argument("-o", "--output", metavar="output_filename", type=str,
                         help="Filename of output video file. Defaults to (input_filename)_upscaled.")
-    parser.add_argument("-m", "--model", metavar="model_filename", type=str, nargs=1,
+    parser.add_argument("-m", "--model", metavar="model_filename", type=str,
                         help="Filename of model weights.", default="models/2x_FilmFrames_0.5_677000_G.pth")
-    parser.add_argument("-a", "--arch", metavar="architecture", type=str, nargs=1,
+    parser.add_argument("-a", "--arch", metavar="architecture", type=str,
                         help="Architecture for upscaling method. Supported options: esrgan",
                         default="esrgan")
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         print("Architecture not supported!")
         exit(1)
 
-    input_filename = str(args.file[0])
+    input_filename = str(args.file)
     # Get filename prefix without extension
     if args.output is not None:
         output_filename = args.output
