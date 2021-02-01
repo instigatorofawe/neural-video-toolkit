@@ -22,3 +22,11 @@ def get_video_info(info) -> Tuple[int, int, str]:
             framerate = streams[i]['r_frame_rate']
 
     return int(width), int(height), framerate
+
+
+def get_video_duration(info) -> int:
+    """
+    Gets duration of a video in frames
+    :param info: Dict containing results of ffmpeg.probe()
+    :return: Integer number of frames in video
+    """

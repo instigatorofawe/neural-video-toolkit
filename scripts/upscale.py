@@ -30,6 +30,7 @@ if __name__ == '__main__':
     # Different architectures need to be handled differently
     model = None
     upscale = 1  # Coefficient by which we're scaling the output video
+    channels = 3  # Number of color channels that model operates on
 
     if args.arch == "esrgan":
         state_dict = torch.load(args.model)
@@ -74,7 +75,10 @@ if __name__ == '__main__':
         ffmpeg
         .input("pipe:", format="rawvideo", pix_fmt="rgb24", s=f"%dx%d" % (width * upscale, height * upscale),
                framerate=framerate)
-        .output(output_filename, pix_fmt="yuv420p", **{"c:v": "libx264", "crf": "10"})
+        .output(output_filename, pix_fmt="yuv444p10le",
+                vf="scale=in_color_matrix=auto:in_range=auto:out_color_matrix=bt709:out_range=tv",
+                **{"c:v": "libx265", "crf": "10", "colorspace:v": "bt709", "color_primaries:v": "bt709",
+                   "color_trc:v": "bt709", "color_range:v": "tv"})
         .overwrite_output()
         .run_async(pipe_stdin=True)
     )
@@ -94,6 +98,7 @@ if __name__ == '__main__':
             with torch.no_grad():
                 output = model(img_LR).data.squeeze(0).float().cpu().clamp_(0, 1).numpy()
             output = numpy.transpose(output, (1, 2, 0))
+
         elif args.arch == "subpixel_cnn":
             img = numpy.frombuffer(in_bytes, 'uint8').reshape([1, height, width, 3])
             img = img * 1. / numpy.iinfo(img.dtype).max

@@ -31,8 +31,8 @@ choco install ffmpeg
 ```
 
 Depending on your hardware/operating system, you may need to use a different procedure when installing TensorFlow or
-PyTorch. This package also requires CUDA 11.0 as well as a compatible GPU. This package was developed on Ubuntu LTS
-20.04 with an Nvidia GeForce RTX 3080 (10 GB VRAM).
+PyTorch. This package also requires CUDA 11.0 with cuDNN 8 as well as a compatible GPU. This package was developed on
+Ubuntu LTS 20.04 with an Nvidia GeForce RTX 3080 (10 GB VRAM).
 
 Package requirements can be installed using pip.
 
