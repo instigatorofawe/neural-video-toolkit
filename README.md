@@ -8,11 +8,12 @@ are supported. Additional model architectures can be supported through the exten
 1. [Package Requirements](#package-requirements)
 1. [Setup](#setup)
 1. [Usage Guide](#usage-guide)
-   1. [Image super resolution](#image-super-resolution)
+    1. [Image super resolution](#image-super-resolution)
 1. [Architectures](#architectures)
-   1. [Architectures for image super resolution](#architectures-for-image-super-resolution)
-      1. [ESRGAN](#esrgan)
-      1. [Sub-pixel Convolutional Neural Network](#sub-pixel-convolutional-neural-network)
+    1. [Architectures for image super resolution](#architectures-for-image-super-resolution)
+        1. [ESRGAN](#esrgan)
+        1. [Sub-pixel Convolutional Neural Network](#sub-pixel-convolutional-neural-network)
+        1. [CAR](#car)
 1. [Changelog](CHANGELOG.md)
 
 ## Package Requirements
@@ -114,3 +115,7 @@ https://github.com/keras-team/keras-io/blob/master/examples/vision/super_resolut
 Methodology from [W. Shi et al., *Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel
 Convolutional Neural Network, Computer Vision and Pattern Recognition*, **2016**](https://arxiv.org/abs/1609.05158)
 
+#### CAR
+
+Code modified from [Wanjie Sun, Zhenzhong Chen. "Learned Image Downscaling for Upscaling using Content Adaptive
+Resampler". arXiv preprint arXiv:1907.12904, 2019](https://github.com/sunwj/CAR)

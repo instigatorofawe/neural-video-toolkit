@@ -6,8 +6,9 @@ import numpy
 import tensorflow
 import torch
 
-from src import get_video_info
-from src.ESRGAN import extract_model_parameters, architecture
+from src import get_video_info, ESRGAN, CAR
+from src.CAR.edsr import EDSR
+from src.ESRGAN import architecture
 from src.subpixel_cnn import load_subpixel_cnn
 
 if __name__ == '__main__':
@@ -22,9 +23,8 @@ if __name__ == '__main__':
     parser.add_argument("-m", "--model", metavar="model_filename", type=str,
                         help="Filename of model weights.")
     parser.add_argument("-a", "--arch", metavar="architecture", type=str,
-                        help="""Architecture for upscaling method. Supported options: esrgan, subpixel_cnn. 
+                        help="""Architecture for upscaling method. Supported options: esrgan, subpixel_cnn, car. 
                         Default: esrgan""", default="esrgan")
-
     args = parser.parse_args()
 
     # Different architectures need to be handled differently
@@ -34,21 +34,28 @@ if __name__ == '__main__':
 
     if args.arch == "esrgan":
         state_dict = torch.load(args.model)
-        in_nc, out_nc, nf, nb, upscale = extract_model_parameters(state_dict)
+        in_nc, out_nc, nf, nb, upscale = ESRGAN.extract_model_parameters(state_dict)
         model = architecture.RRDBNet(in_nc, out_nc, nf, nb, gc=32, upscale=upscale, norm_type=None,
                                      act_type='leakyrelu', mode='CNA', res_scale=1, upsample_mode='upconv')
         model.load_state_dict(state_dict, strict=True)
-
         # Turn on evaluation mode and turn off gradient computation in pytorch
         model.eval()
-        for k, v in model.named_parameters():
-            v.requires_grad = False
         model = model.to('cuda')
     elif args.arch == "subpixel_cnn":
         channels, upscale, model = load_subpixel_cnn(args.model)
+    elif args.arch == "car":
+        state_dict = torch.load(args.model)
+        upscale = CAR.extract_model_parameters(state_dict)
+        model = EDSR(32, 256, scale=upscale)
+        model = torch.nn.DataParallel(model, [0])
+        model.load_state_dict(state_dict)
+        model.eval()
     else:
         print("Architecture not supported!")
         exit(1)
+
+    # Disable computation of gradients on PyTorch, as we are evaluating, not training
+    torch.set_grad_enabled(False)
 
     input_filename = str(args.file)
     # Get filename prefix without extension
@@ -65,22 +72,22 @@ if __name__ == '__main__':
     # Set up decoding and encoding ffmpeg processes
     input_process = (
         ffmpeg
-        .input(input_filename)
-        .output("pipe:", format="rawvideo", pix_fmt="rgb24")
-        .run_async(pipe_stdout=True)
+            .input(input_filename)
+            .output("pipe:", format="rawvideo", pix_fmt="rgb24")
+            .run_async(pipe_stdout=True)
     )
 
     # TODO: add additional encoding options instead of hard coding compression settings
     output_process = (
         ffmpeg
-        .input("pipe:", format="rawvideo", pix_fmt="rgb24", s=f"%dx%d" % (width * upscale, height * upscale),
-               framerate=framerate)
-        .output(output_filename, pix_fmt="yuv444p10le",
-                vf="scale=in_color_matrix=auto:in_range=auto:out_color_matrix=bt709:out_range=tv",
-                **{"c:v": "libx265", "crf": "10", "colorspace:v": "bt709", "color_primaries:v": "bt709",
-                   "color_trc:v": "bt709", "color_range:v": "tv"})
-        .overwrite_output()
-        .run_async(pipe_stdin=True)
+            .input("pipe:", format="rawvideo", pix_fmt="rgb24", s=f"%dx%d" % (width * upscale, height * upscale),
+                   framerate=framerate)
+            .output(output_filename, pix_fmt="yuv444p10le",
+                    vf="scale=in_color_matrix=auto:in_range=auto:out_color_matrix=bt709:out_range=tv",
+                    **{"c:v": "libx265", "crf": "10", "colorspace:v": "bt709", "color_primaries:v": "bt709",
+                       "color_trc:v": "bt709", "color_range:v": "tv"})
+            .overwrite_output()
+            .run_async(pipe_stdin=True)
     )
 
     while True:
@@ -89,7 +96,7 @@ if __name__ == '__main__':
             break
 
         # Separate handling for separate model architectures
-        if args.arch == "esrgan":
+        if args.arch == "esrgan" or args.arch == "car":
             img = numpy.frombuffer(in_bytes, 'uint8').reshape([height, width, 3])
             img = img * 1. / numpy.iinfo(img.dtype).max
             img = torch.from_numpy(numpy.transpose(img, (2, 0, 1))).float()

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0] - 2021-02-04
+
+### Added
+
+- Image super resolution using Content Adaptive Resampler. Code modified from [Wanjie Sun, Zhenzhong Chen. "Learned
+  Image Downscaling for Upscaling using Content Adaptive Resampler". arXiv preprint arXiv:1907.12904, 2019](
+  https://github.com/sunwj/CAR)
+
 ## [0.2.2] - 2021-01-31
 
 ### Changed
