@@ -25,8 +25,7 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--arch", metavar="architecture", type=str,
                         help="""Architecture for upscaling method. Supported options: esrgan, subpixel_cnn, car. 
                         Default: esrgan""", default="esrgan")
-    args = parser.parse_args(["-m", "./models/2x_filmframes.pth", "./data/ep14_ed_full.mkv"])
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
     # Different architectures need to be handled differently
     model = None

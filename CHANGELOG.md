@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.2] - 2021-02-04
+
+### Fixed
+
+- Removed hard-coded argument from upscale.py
+
 ## [0.3.1] - 2021-02-04
 
 ### Added
