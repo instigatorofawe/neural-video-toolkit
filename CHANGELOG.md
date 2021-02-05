@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2021-02-04
+
+### Added
+
+- Added duplicate frame detection so as to minimize unnecessary computation. This increases performance significantly.
+
 ## [0.3.0] - 2021-02-04
 
 ### Added
@@ -60,13 +66,10 @@
   Conference on Computer Vision Workshops (ECCVW)*, **2018**](https://github.com/BlueAmulet/ESRGAN)
 
 [0.1.0]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.0
-
 [0.1.1]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.1
-
 [0.1.2]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.1.2
-
 [0.2.0]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.2.0
-
 [0.2.1]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.2.1
-
 [0.2.2]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.2.2
+[0.3.0]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.3.0
+[0.3.1]:https://github.com/instigatorofawe/neural-video-toolkit/releases/tag/0.3.1

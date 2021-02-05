@@ -25,7 +25,8 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--arch", metavar="architecture", type=str,
                         help="""Architecture for upscaling method. Supported options: esrgan, subpixel_cnn, car. 
                         Default: esrgan""", default="esrgan")
-    args = parser.parse_args()
+    args = parser.parse_args(["-m", "./models/2x_filmframes.pth", "./data/ep14_ed_full.mkv"])
+    # args = parser.parse_args()
 
     # Different architectures need to be handled differently
     model = None
@@ -90,10 +91,19 @@ if __name__ == '__main__':
             .run_async(pipe_stdin=True)
     )
 
+    last_frame = None
+    last_output = None
+    n_duplicate_frames = 0
     while True:
         in_bytes = input_process.stdout.read(width * height * 3)
         if not in_bytes:
             break
+
+        # Detect duplicates, and use the cached output if there is a duplicate frame
+        if last_frame is not None and last_frame == in_bytes:
+            output_process.stdin.write(last_output.tobytes())
+            n_duplicate_frames += 1
+            continue
 
         # Separate handling for separate model architectures
         if args.arch == "esrgan" or args.arch == "car":
@@ -118,6 +128,11 @@ if __name__ == '__main__':
         output = (output * 255.0).round().astype('uint8')
         output_process.stdin.write(output.tobytes())
 
+        last_frame = in_bytes
+        last_output = output
+
     output_process.stdin.close()
     input_process.wait()
     output_process.wait()
+
+    print(f"%d duplicate frames detected" % n_duplicate_frames)
